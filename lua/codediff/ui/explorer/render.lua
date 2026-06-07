@@ -21,8 +21,9 @@ end
 function M.create(data, tabpage, width)
   local options = config.options.explorer or {}
   local position = options.position or "left"
-  local size = position == "bottom" and (options.height or 15) or (width or options.width or 40)
-  local text_width = position == "bottom" and vim.o.columns or size
+  local horizontal = position == "bottom" or position == "top"
+  local size = horizontal and (options.height or 15) or (width or options.width or 40)
+  local text_width = horizontal and vim.o.columns or size
   local split = Split({
     relative = "editor",
     position = position,
