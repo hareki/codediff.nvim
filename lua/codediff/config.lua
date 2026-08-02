@@ -43,6 +43,7 @@ M.defaults = {
     cycle_next_hunk = true, -- Wrap around when navigating hunks (]c/[c): true = cycle, false = stop at first/last
     cycle_next_file = true, -- Wrap around when navigating files (]f/[f): true = cycle, false = stop at first/last
     cycle_hunks_across_files = false, -- ]c/[c at file boundary jumps to first/last hunk of next/prev file (explorer/history mode)
+    navigation_message = true, -- Echo hunk position ("Hunk 2 of 5", "Last hunk") when navigating with ]c/[c: false = navigate silently
     jump_to_first_change = true, -- Auto-scroll to first change when opening a diff: true = jump to first hunk, false = stay at same line
     highlight_added_deleted_files = false, -- Tint the full contents of added, untracked, and deleted files
     highlight_priority = 100, -- Priority for line-level diff highlights (increase to override LSP highlights)
