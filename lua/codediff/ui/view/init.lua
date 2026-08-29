@@ -62,6 +62,14 @@ function M.update(tabpage, session_config, auto_scroll_to_first_hunk)
     return require("codediff.ui.view.inline_view").update(tabpage, session_config, auto_scroll_to_first_hunk)
   end
 
+  -- An inline tab has one pane with both sides pointing at it; side-by-side
+  -- would write both into that window. Reshape it first -- side_by_side.update
+  -- opens the missing pane itself.
+  local session = lifecycle.get_session(tabpage)
+  if session_config and session_config.conflict and session and session.layout == "inline" then
+    require("codediff.ui.view.toggle").normalize_side_by_side_layout(tabpage)
+  end
+
   return side_by_side.update(tabpage, session_config, auto_scroll_to_first_hunk)
 end
 
