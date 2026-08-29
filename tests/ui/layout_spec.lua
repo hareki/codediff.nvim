@@ -29,11 +29,10 @@ local function create_mock_session(tabpage, opts)
   local session_mod = require("codediff.ui.lifecycle.session")
   local active_diffs = session_mod.get_active_diffs()
   active_diffs[tabpage] = {
-    mode = opts.mode or "standalone",
+    panel = opts.panel and vim.tbl_extend("force", opts.panel, { view = opts.panel_obj }) or nil,
     original_win = opts.original_win,
     modified_win = opts.modified_win,
     result_win = opts.result_win,
-    explorer = opts.panel,
     original_bufnr = opts.original_bufnr,
     modified_bufnr = opts.modified_bufnr,
   }
@@ -210,12 +209,12 @@ describe("Layout Manager", function()
     local panel = create_panel_split("left", panel_width)
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -248,12 +247,12 @@ describe("Layout Manager", function()
     local panel = create_panel_split("bottom", panel_height)
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -362,12 +361,12 @@ describe("Layout Manager", function()
     local panel = create_panel_split("left", panel_width)
 
     create_mock_session(tabpage, {
-      mode = "history",
+      panel = { name = "history" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -400,12 +399,12 @@ describe("Layout Manager", function()
     local panel = create_panel_split("bottom", panel_height)
 
     create_mock_session(tabpage, {
-      mode = "history",
+      panel = { name = "history" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -521,13 +520,13 @@ describe("Layout Manager", function()
     vim.fn.win_splitmove(orig_win, mod_win, { vertical = true, rightbelow = false })
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
       result_win = result_win,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -567,13 +566,13 @@ describe("Layout Manager", function()
     local result_win = vim.api.nvim_get_current_win()
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
       result_win = result_win,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -615,13 +614,13 @@ describe("Layout Manager", function()
     local result_win = vim.api.nvim_get_current_win()
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
       result_win = result_win,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -667,13 +666,13 @@ describe("Layout Manager", function()
     vim.fn.win_splitmove(orig_win, mod_win, { vertical = true, rightbelow = false })
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
       result_win = result_win,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -713,13 +712,13 @@ describe("Layout Manager", function()
     local result_win = vim.api.nvim_get_current_win()
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
       result_win = result_win,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -760,13 +759,13 @@ describe("Layout Manager", function()
     local result_win = vim.api.nvim_get_current_win()
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
       result_win = result_win,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -821,12 +820,12 @@ describe("Layout Manager", function()
     panel.is_hidden = true
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -868,13 +867,13 @@ describe("Layout Manager", function()
     local result_win = vim.api.nvim_get_current_win()
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = mod_win,
       original_bufnr = orig_buf,
       modified_bufnr = mod_buf,
       result_win = result_win,
-      panel = panel,
+      panel_obj = panel,
     })
 
     layout.arrange(tabpage)
@@ -935,12 +934,12 @@ describe("Layout Manager", function()
     local panel = create_panel_split("left", panel_width)
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = 99999, -- invalid window (was closed)
       modified_win = mod_win,
       original_bufnr = mod_buf,
       modified_bufnr = mod_buf,
-      panel = panel,
+      panel_obj = panel,
     })
     local session_mod = require("codediff.ui.lifecycle.session")
     session_mod.get_active_diffs()[tabpage].single_pane = true
@@ -973,12 +972,12 @@ describe("Layout Manager", function()
     local panel = create_panel_split("left", panel_width)
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = orig_win,
       modified_win = 99999, -- invalid window (was closed)
       original_bufnr = orig_buf,
       modified_bufnr = orig_buf,
-      panel = panel,
+      panel_obj = panel,
     })
     local session_mod = require("codediff.ui.lifecycle.session")
     session_mod.get_active_diffs()[tabpage].single_pane = true
@@ -1010,12 +1009,12 @@ describe("Layout Manager", function()
     local panel = create_panel_split("bottom", panel_height)
 
     create_mock_session(tabpage, {
-      mode = "explorer",
+      panel = { name = "explorer" },
       original_win = 99999,
       modified_win = mod_win,
       original_bufnr = mod_buf,
       modified_bufnr = mod_buf,
-      panel = panel,
+      panel_obj = panel,
     })
     local session_mod = require("codediff.ui.lifecycle.session")
     session_mod.get_active_diffs()[tabpage].single_pane = true
@@ -1053,7 +1052,7 @@ describe("Layout Manager", function()
     local session_mod = require("codediff.ui.lifecycle.session")
     local state = require("codediff.ui.lifecycle.state")
     session_mod.get_active_diffs()[tabpage] = {
-      mode = "explorer",
+      panel = { name = "explorer", view = panel },
       git_root = "/tmp",
       original = path.empty(),
       modified = path.empty(),
@@ -1063,7 +1062,6 @@ describe("Layout Manager", function()
       modified_bufnr = mod_buf,
       original_win = orig_win,
       modified_win = mod_win,
-      explorer = panel,
       stored_diff_result = {},
       changedtick = { original = 0, modified = 0 },
       mtime = { original = nil, modified = nil },
@@ -1130,7 +1128,7 @@ describe("Layout Manager", function()
     local session_mod = require("codediff.ui.lifecycle.session")
     local state = require("codediff.ui.lifecycle.state")
     session_mod.get_active_diffs()[tabpage] = {
-      mode = "explorer",
+      panel = { name = "explorer", view = panel },
       git_root = "/tmp",
       original = path.empty(),
       modified = path.empty(),
@@ -1140,7 +1138,6 @@ describe("Layout Manager", function()
       modified_bufnr = mod_buf,
       original_win = orig_win,
       modified_win = mod_win,
-      explorer = panel,
       stored_diff_result = {},
       changedtick = { original = 0, modified = 0 },
       mtime = { original = nil, modified = nil },
@@ -1195,7 +1192,7 @@ describe("Layout Manager", function()
     local session_mod = require("codediff.ui.lifecycle.session")
     local state = require("codediff.ui.lifecycle.state")
     session_mod.get_active_diffs()[tabpage] = {
-      mode = "explorer",
+      panel = { name = "explorer", view = panel },
       git_root = "/tmp",
       original = path.empty(),
       modified = path.empty(),
@@ -1205,7 +1202,6 @@ describe("Layout Manager", function()
       modified_bufnr = mod_buf,
       original_win = orig_win,
       modified_win = mod_win,
-      explorer = panel,
       stored_diff_result = {},
       changedtick = { original = 0, modified = 0 },
       mtime = { original = nil, modified = nil },
@@ -1265,7 +1261,7 @@ describe("Layout Manager", function()
     local session_mod = require("codediff.ui.lifecycle.session")
     local state = require("codediff.ui.lifecycle.state")
     session_mod.get_active_diffs()[tabpage] = {
-      mode = "explorer",
+      panel = { name = "explorer", view = panel },
       git_root = "/tmp",
       original = path.empty(),
       modified = path.empty(),
@@ -1275,7 +1271,6 @@ describe("Layout Manager", function()
       modified_bufnr = mod_buf,
       original_win = orig_win,
       modified_win = mod_win,
-      explorer = panel,
       stored_diff_result = {},
       changedtick = { original = 0, modified = 0 },
       mtime = { original = nil, modified = nil },
@@ -1365,12 +1360,19 @@ describe("Layout Manager", function()
     local session_mod = require("codediff.ui.lifecycle.session")
     config.options.explorer = config.options.explorer or {}
     config.options.explorer.width = panel_width
-    session_mod.create_session(
-      tabpage, "explorer", "/tmp", "", "", nil, nil,
-      orig_buf, mod_buf, orig_win, mod_win, {}, nil
-    )
+    session_mod.create_session(tabpage, {
+      panel = { name = "explorer" },
+      git_root = "/tmp",
+      original = "",
+      modified = "",
+      original_bufnr = orig_buf,
+      modified_bufnr = mod_buf,
+      original_win = orig_win,
+      modified_win = mod_win,
+      lines_diff = {},
+    })
     local accessors = require("codediff.ui.lifecycle.accessors")
-    accessors.set_explorer(tabpage, panel)
+    accessors.set_panel_view(tabpage, panel)
 
     -- The VimResized autocmd is installed by lifecycle.setup() (once-guarded by
     -- view.create()). This test creates the session directly, bypassing view.create(),
