@@ -2,33 +2,26 @@
 
 **Keep the agent running. Review changes as they land.**
 
-CodeDiff is a live code review workspace for Neovim, built for human-in-the-loop AI development. Run any coding agent in the background while you inspect and navigate changes as they land.
+CodeDiff is a live code review workspace for Neovim with VSCode style diffs, built for human-in-the-loop AI development. Run any coding agent in the background while you inspect and navigate changes as they land.
 
 CodeDiff stays synchronized with a changing repository, so review can continue as the code evolves. From the same workspace, you can stage or discard changes, review branches and pull requests, browse history, and resolve merge conflicts.
 
 <div align="center">
 
-![VSCode-style diff view showing side-by-side comparison with two-tier highlighting](https://github.com/user-attachments/assets/473ae319-40ac-40e4-958b-a0f2525d1f94)
-
-</div>
-
-<div align="center">
-
-https://github.com/user-attachments/assets/64c41f01-dffe-4318-bce4-16eec8de356e
-
-**Demo: Quick walkthrough of diff features**
+https://github.com/user-attachments/assets/3c66a26d-5ff9-4dac-8035-a2f2b7bd2308
 
 </div>
 
 ## Features
 
 - **Live review:** Changes appear as they land while any coding agent works in the background.
+- **VSCode style diffs:** Review side-by-side or inline changes with character-level highlighting.
 - **Human control:** Inspect, stage, unstage, or discard files and hunks from one review workspace.
 - **Complete workflows:** Review local changes, staged changes, revisions, pull requests, and history.
 - **Precise diffs:** See line and character changes in side-by-side or inline layouts.
 - **Focused navigation:** Move between files and hunks, fold unchanged code, and track moved blocks.
 - **Conflict resolution:** Resolve merge conflicts per block or across the whole file.
-- **Editor-native context:** Keep Tree-sitter and semantic highlighting in revision buffers.
+- **Editor-native context:** Keep Tree-sitter syntax highlighting in revision buffers.
 
 ## Installation
 
