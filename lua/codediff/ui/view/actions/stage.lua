@@ -6,7 +6,7 @@ local lifecycle = require("codediff.ui.lifecycle")
 
 function M.toggle_stage(ctx)
   local current_buf = vim.api.nvim_get_current_buf()
-  local explorer = lifecycle.get_explorer(ctx.tabpage)
+  local explorer = lifecycle.get_panel_view(ctx.tabpage)
   local session = lifecycle.get_session(ctx.tabpage)
 
   if not session then
@@ -19,7 +19,7 @@ function M.toggle_stage(ctx)
     return
   end
 
-  if not explorer or not explorer.git_root then
+  if not explorer or not explorer.data.git_root then
     vim.notify("Stage/unstage only available in git mode", vim.log.levels.WARN)
     return
   end
@@ -34,8 +34,8 @@ function M.toggle_stage(ctx)
 
   -- Case 2: Cursor in diff buffers (original or modified)
   if current_buf == ctx.original_bufnr or current_buf == ctx.modified_bufnr then
-    local file_path = explorer.current_file_path
-    local group = explorer.current_file_group
+    local file_path = explorer.data.current_file_path
+    local group = explorer.data.current_file_group
 
     -- Guard: must have a current file selected
     if not file_path then
@@ -50,7 +50,7 @@ function M.toggle_stage(ctx)
     end
 
     local explorer_module = require("codediff.ui.explorer")
-    explorer_module.toggle_stage_file(explorer.git_root, file_path, group)
+    explorer_module.toggle_stage_file(explorer.data.git_root, file_path, group)
     return
   end
 
@@ -58,7 +58,7 @@ function M.toggle_stage(ctx)
 end
 
 function M.toggle_staged_view(ctx)
-  local explorer = lifecycle.get_explorer(ctx.tabpage)
+  local explorer = lifecycle.get_panel_view(ctx.tabpage)
   if not ctx.is_explorer_mode or not explorer then
     vim.notify("Toggle staged view only available in explorer mode", vim.log.levels.WARN)
     return

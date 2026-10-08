@@ -1,7 +1,8 @@
 codediff.nvim                                 *codediff.txt* *codediff.nvim* *codediff*
 
-CodeDiff provides VSCode-style diff rendering with two-tier highlighting,
-supporting both side-by-side and inline (unified) layouts.
+CodeDiff is a live code review workspace for Neovim. It keeps repository
+changes synchronized while you inspect diffs, stage or discard hunks, review
+pull requests and history, and resolve merge conflicts.
 
 This help file is usage-focused. For installation, build, and development
 details, see README.md.
@@ -12,6 +13,7 @@ QUICK START                                           *codediff-quickstart*
 After installing the plugin and running |:CodeDiff|, you can:
 - Browse changed files (default explorer)
 - Compare the current file with a git revision
+- Review a pull request without checking it out
 - Compare two files or directories
 
 ==============================================================================
@@ -44,6 +46,35 @@ Target another repository (explorer and history modes):   *codediff-repo*
 <
 Operate on the repository containing the given path (its root or any
 subdirectory) instead of the current buffer/cwd. `-C` is a git-style alias.
+
+Review a pull request without checking it out:                 *codediff-pr*
+>vim
+  :CodeDiff pr 512
+  :CodeDiff --repo ~/code/other-repo pr 512
+  :CodeDiff pr 512 --remote upstream
+  :CodeDiff pr 512 --base release/3.x
+  :CodeDiff pr 512 -- lua/codediff
+<
+CodeDiff recognizes GitHub and Azure DevOps `refs/pull/` refs and GitLab
+`refs/merge-requests/` refs. It prefers a synthetic merge ref, which identifies
+both sides of the review. Otherwise it compares the PR head with the remote's
+default branch; use --base for a non-default target. `origin` is the default
+remote. Existing Git remote authentication is used; no provider CLI is needed.
+
+Fetched refs live under `refs/codediff/pull-requests/`, are overwritten when the
+same PR is reopened, and do not create a local branch or change the working
+tree. They are retained for asynchronous file loading and reuse.
+
+Delete cached refs explicitly:                              *codediff-pr-clean*
+>vim
+  :CodeDiff pr clean 512
+  :CodeDiff pr clean 512 --remote upstream
+  :CodeDiff pr clean --all
+  :CodeDiff pr clean --all --remote upstream
+<
+The first form deletes every cached ref for one PR on `origin` unless --remote
+is supplied. --all deletes every cached PR ref in the selected repository;
+--remote limits it to one remote. Both forms support --repo/-C.
 
 Scope to a subdirectory or path:                          *codediff-pathspec*
 >vim
@@ -246,6 +277,7 @@ Setup entry point:
       jump_to_first_change = true,
       highlight_added_deleted_files = false,
       highlight_priority = 100,
+      gutter_signs = false,
       compute_moves = false,
       compact_context_lines = 3,
       compact_sync_folds = true,
@@ -258,7 +290,7 @@ Setup entry point:
       hidden = false,
       width = 40,
       height = 15,
-      auto_refresh = true,
+      auto_refresh = true,  -- Native file watching with polling fallback
       auto_open_on_cursor = false,
       indent_markers = true,
       icons = {
@@ -445,6 +477,53 @@ Example: replace only group rows and right-align the file count:
 <
 
 ==============================================================================
+GUTTER SIGNS                                         *codediff-gutter-signs*
+
+Gutter signs are disabled by default and require Neovim 0.10+, because a sign
+extmark spanning several lines only decorates every line from 0.10 on. When
+enabled, they appear in every window displaying a buffer used by an active
+CodeDiff view. CodeDiff removes them when the view is suspended or closed.
+
+>lua
+  -- Disabled by default; existing move annotations remain.
+  gutter_signs = false
+
+  -- Enabled defaults.
+  gutter_signs = {
+    insert_text = "＋",
+    delete_text = "－",
+    highlight_numbers = true,
+    changed_priority = 100,
+    unchanged_priority = nil,
+  }
+
+  -- Hide other Neovim signs with lower priorities.
+  gutter_signs = {
+    changed_priority = 100,
+    unchanged_priority = 7,
+  }
+<
+
+Place `gutter_signs` under `diff`. `insert_text` and `delete_text` must each
+occupy one or two display cells, as measured by strdisplaywidth(), because
+Neovim limits sign text to two display cells. The fullwidth defaults each
+occupy two display cells. A rejected sign is skipped with a warning and the
+rest of the diff still renders.
+
+CodeDiff does not modify signcolumn or statuscolumn. This example keeps a sign
+column and places signs after line numbers:
+
+>lua
+  vim.opt.signcolumn = "yes"
+  vim.opt.statuscolumn = "%C%=%l %s"
+<
+
+`signcolumn = "yes:2"` allows a second sign on each line. Changed signs use
+priority 100 by default. An unchanged blocker at priority 99 can hide
+lower-priority Gitsigns, remote signs, diagnostics, debugger signs, and other
+signs across unchanged lines while changed signs still win.
+
+==============================================================================
 HIGHLIGHT GROUPS                                     *codediff-highlight-groups*
 
 CodeDiff defines highlight groups matching VSCode's diff colors:
@@ -461,6 +540,10 @@ CodeDiff defines highlight groups matching VSCode's diff colors:
 - CodeDiffHelpKey - key bindings in keymap help (links to Special)
 - CodeDiffHelpSep - separators in keymap help (links to NonText)
 - CodeDiffHelpDesc - descriptions in keymap help (links to Normal)
+- CodeDiffGutterInsert - Gutter insert sign (defaults to CodeDiffLineInsert)
+- CodeDiffGutterDelete - Gutter delete sign (defaults to CodeDiffLineDelete)
+- CodeDiffGutterInsertNumber - Gutter insert line number (defaults to CodeDiffCharInsert)
+- CodeDiffGutterDeleteNumber - Gutter delete line number (defaults to CodeDiffCharDelete)
 
 Default behavior:
 - Uses DiffAdd and DiffDelete for line-level highlights
